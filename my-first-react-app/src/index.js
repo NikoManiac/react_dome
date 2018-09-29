@@ -91,8 +91,46 @@ function Square(props) {
 
 class Game extends React.Component {
   render() {
-    return <Board />;
+    return (
+      <Board />,
+      <App></App>
+    );
   }
 }
+
+function Lists(props) {
+  const numbers = props.numbers;
+  return (
+    <ul>
+      {numbers.map(item => 
+        <li key={item.toString()}>{item}</li>
+      )}
+    </ul>
+  );
+}
+
+const numbers = [1, 2, 3, 4, 5];
+
+class App extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      name: 'dddddddddd'
+    }
+  }
+  hander() {
+      console.log(this);
+      console.log(this.state.name);
+  }
+  render() {
+      return (
+          <div onClick={() => this.hander()}>
+               <Lists numbers={numbers}></Lists>
+          </div>
+      );
+  }
+
+}
+
 
 ReactDOM.render(<Game />, document.getElementById("root"));
