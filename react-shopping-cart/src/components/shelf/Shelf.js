@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import contect from 'react-redux';
+import { connect } from 'react-redux';
 import Product from './Product';
 import Spinner from '../Spinner';
 import Clearfix from '../Clearfix';
-
+import { fetchProducts } from '../../store/actions/productActions';
+import { addProduct } from '../../store/actions/floatCartActions';
 class Shelf extends Component {
     state = {
         loading: false
@@ -14,9 +15,17 @@ class Shelf extends Component {
 
         this.handleFetchProducts(filters, sort);
     }
+    componentWillReceiveProps(nextProps) {
+        console.log('这里开始执行了')
+        const { filters: nextFilters, sort: nextSort } = nextProps;
 
-    componentWillReceiveProps() {
-        // 这时候应该做些事，待定
+        if (nextFilters !== this.props.filters) {
+            this.handleFetchProducts(nextFilters, undefined);
+        }
+
+        if (nextSort !== this.props.sort) {
+            this.handleFetchProducts(undefined, nextSort);
+        }
     }
     handleFetchProducts = (
         filters = this.props.filters,
@@ -36,13 +45,16 @@ class Shelf extends Component {
     };
     render() {
         const { products } = this.props;
-        let p = products.map(prodcut => (
-            <Product
-                prodcut={prodcut}
-                addProduct={this.props.addProduct}
-                key={prodcut.id}
-            />
-        ));
+
+        const p = products.map(p => {
+            return (
+                <Product
+                    product={p}
+                    addProduct={this.props.addProduct}
+                    key={p.id}
+                />
+            );
+        });
         return (
             <React.Fragment>
                 {this.state.loading && <Spinner />}
@@ -55,8 +67,11 @@ class Shelf extends Component {
 
 const mapStateToProps = state => ({
     products: state.products.items,
-    filters: state.filters.items,
-    sort: state.sort.item
+    filters: null,
+    sort: null
 });
 
-export default contect(mapStateToProps, { fetchProducts, addProduct })(Shelf);
+export default connect(
+    mapStateToProps,
+    { fetchProducts, addProduct }
+)(Shelf);
